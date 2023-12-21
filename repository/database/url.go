@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
@@ -24,7 +25,7 @@ func (d *database) SearchURLFromShortURL(ctx context.Context, shortURL string) (
 
 	var url string
 	if err := row.Scan(&url); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return "", apperr.ErrShortURLNotFound
 		}
 
