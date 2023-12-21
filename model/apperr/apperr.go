@@ -15,6 +15,6 @@ func (e AppError) Error() string {
 }
 
 var (
-	ServerError      = AppError{http.StatusInternalServerError, "internal server error", "internal server error"}
-	ShortURLNotFound = AppError{http.StatusNotFound, "short url not found", ""}
+	ErrServerError      = AppError{http.StatusInternalServerError, "internal server error", "internal server error"}
+	ErrShortURLNotFound = AppError{http.StatusNotFound, "short url not found", ""}
 )

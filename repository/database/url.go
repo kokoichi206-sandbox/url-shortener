@@ -26,7 +26,7 @@ func (d *database) SearchURLFromShortURL(ctx context.Context, shortURL string) (
 	var url string
 	if err := row.Scan(&url); err != nil {
 		if err == sql.ErrNoRows {
-			return "", apperr.ShortURLNotFound
+			return "", apperr.ErrShortURLNotFound
 		}
 
 		return "", fmt.Errorf("failed to scan: %w", err)
