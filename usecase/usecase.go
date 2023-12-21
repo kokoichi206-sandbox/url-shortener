@@ -8,6 +8,8 @@ import (
 
 type Usecase interface {
 	Health(ctx context.Context) error
+
+	SearchOriginalURL(ctx context.Context, shortURL string) (string, error)
 }
 
 type usecase struct {

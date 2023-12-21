@@ -68,7 +68,7 @@ func New() Config {
 
 	var dbName string
 	if dbName = os.Getenv("DB_NAME"); dbName == "" {
-		dbName = "postgres"
+		dbName = "postgresql"
 	}
 
 	var dbSslMode string
