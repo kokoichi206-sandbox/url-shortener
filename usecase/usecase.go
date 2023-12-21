@@ -27,5 +27,6 @@ func New(database database, logger logger.Logger) Usecase {
 
 func (u *usecase) Health(ctx context.Context) error {
 	// db の接続確認。
+	//nolint: wrapcheck
 	return u.database.Health(ctx)
 }

@@ -36,5 +36,6 @@ func New(
 }
 
 func (d *database) Health(ctx context.Context) error {
+	//nolint: wrapcheck
 	return d.db.PingContext(ctx)
 }
