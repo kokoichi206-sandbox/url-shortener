@@ -1,0 +1,30 @@
+run:
+  timeout: 3m
+
+linters-settings:
+  gomnd:
+    settings:
+      mnd:
+        ignored-numbers: "0o666,0o777"
+linters:
+  enable-all: true
+  disable:
+    # New で interface を戻り値とすることを許す。
+    - ireturn
+    - varnamelen
+    - tagliatelle
+    - nonamedreturns
+    - depguard
+    - containedctx
+    ## ============ deprecated ============
+    - exhaustivestruct
+    - exhaustruct
+    - golint
+issues:
+  exclude-rules:
+    - path: config/config.go
+      linters:
+        - funlen
+    - linters:
+        - goerr113
+      text: 'do not define dynamic errors'
