@@ -1,10 +1,10 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
-	"github.com/kokoichi206-sandbox/url-shortener/repository"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
 	_ "github.com/lib/pq" // postgres driver
 )
@@ -16,7 +16,7 @@ type database struct {
 
 func New(
 	driver, host, port, user, password, dbname, sslmode string, logger logger.Logger,
-) (repository.Database, error) {
+) (*database, error) {
 	source := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode,
@@ -33,4 +33,9 @@ func New(
 	}
 
 	return db, nil
+}
+
+func (d *database) Health(ctx context.Context) error {
+	//nolint: wrapcheck
+	return d.db.PingContext(ctx)
 }

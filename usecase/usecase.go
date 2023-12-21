@@ -1,23 +1,32 @@
 package usecase
 
 import (
-	"github.com/kokoichi206-sandbox/url-shortener/repository"
+	"context"
+
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
 )
 
-type Usecase interface{}
+type Usecase interface {
+	Health(ctx context.Context) error
+}
 
 type usecase struct {
-	database repository.Database
+	database database
 
 	logger logger.Logger
 }
 
-func New(database repository.Database, logger logger.Logger) Usecase {
+func New(database database, logger logger.Logger) Usecase {
 	usecase := &usecase{
 		database: database,
 		logger:   logger,
 	}
 
 	return usecase
+}
+
+func (u *usecase) Health(ctx context.Context) error {
+	// db の接続確認。
+	//nolint: wrapcheck
+	return u.database.Health(ctx)
 }

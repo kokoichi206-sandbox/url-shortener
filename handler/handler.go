@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -71,6 +72,10 @@ func handleError(c *gin.Context, logger logger.Logger, err error) {
 }
 
 func (h *handler) Health(c *gin.Context) error {
+	if err := h.usecase.Health(c.Request.Context()); err != nil {
+		return fmt.Errorf("failed to health check: %w", err)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"health": "ok",
 	})
