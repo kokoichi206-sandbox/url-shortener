@@ -34,10 +34,13 @@ func New(logger logger.Logger, usecase usecase.Usecase) *handler {
 }
 
 func (h *handler) setupRoutes() {
-	base := h.Engine.Group("/api/v1")
-	base.Use(h.requestIDMW())
+	base := h.Engine.Group("")
+	base.Handle(http.MethodGet, "/:shortURL", handlerWrapper(h.GetOriginalURL, h.logger))
 
-	base.Handle(http.MethodGet, "/health", handlerWrapper(h.Health, h.logger))
+	api := base.Group("/api/v1")
+	api.Use(h.requestIDMW())
+
+	api.Handle(http.MethodGet, "/health", handlerWrapper(h.Health, h.logger))
 }
 
 func handlerWrapper(fun func(c *gin.Context) error, logger logger.Logger) gin.HandlerFunc {
