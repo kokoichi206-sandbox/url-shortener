@@ -21,7 +21,6 @@ func (h *handler) GetOriginalURL(c *gin.Context) error {
 		return fmt.Errorf("failed to exec usecase.SearchOriginalURL: %w", err)
 	}
 
-	fmt.Printf("url: %v\n", url)
 	c.Redirect(http.StatusMovedPermanently, url)
 
 	return nil
