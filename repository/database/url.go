@@ -2,9 +2,12 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	tracer "github.com/opentracing/opentracing-go"
+
+	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
 )
 
 const searchURLFromShortURLQuery = `
@@ -22,6 +25,10 @@ func (d *database) SearchURLFromShortURL(ctx context.Context, shortURL string) (
 
 	var url string
 	if err := row.Scan(&url); err != nil {
+		if err == sql.ErrNoRows {
+			return "", apperr.ShortURLNotFound
+		}
+
 		return "", fmt.Errorf("failed to scan: %w", err)
 	}
 
