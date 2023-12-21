@@ -2,6 +2,7 @@
 
 EXTERNAL_TOOLS := \
 	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.1 \
+	go install github.com/cosmtrek/air@latest \
 	golang.org/x/pkgsite/cmd/pkgsite@latest # latest は go 1.19 以上が必要: https://github.com/golang/pkgsite#requirements
 
 .PHONY: help
@@ -36,6 +37,10 @@ lint-fix:	## lint 実行時, gofumpt のエラーが出たらやると良い。
 .PHONY: serve
 serve:	## サーバーを起動する。
 	go run app/*
+
+.PHONY: dev
+dev:	## Hot reload 付きでサーバーを起動する。
+	air -c .air.toml
 
 .PHONY: build-local
 build-local:	## バイナリをビルドする（race オプションがついているため、ローカル実行専用とする）。
