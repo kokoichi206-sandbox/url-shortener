@@ -5,9 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	tracer "github.com/opentracing/opentracing-go"
-
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
+	tracer "github.com/opentracing/opentracing-go"
 )
 
 const searchURLFromShortURLQuery = `
