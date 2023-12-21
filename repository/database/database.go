@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -32,4 +33,8 @@ func New(
 	}
 
 	return db, nil
+}
+
+func (d *database) Health(ctx context.Context) error {
+	return d.db.PingContext(ctx)
 }

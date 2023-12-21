@@ -1,3 +1,7 @@
 package usecase
 
-type database interface{}
+import "context"
+
+type database interface {
+	Health(ctx context.Context) error
+}
