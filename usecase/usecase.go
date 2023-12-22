@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/repository"
+	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
 )
 
@@ -14,15 +15,17 @@ type Usecase interface {
 }
 
 type usecase struct {
-	database repository.Database
+	database  repository.Database
+	txManager transaction.TxManager
 
 	logger logger.Logger
 }
 
-func New(database repository.Database, logger logger.Logger) Usecase {
+func New(database repository.Database, txManager transaction.TxManager, logger logger.Logger) Usecase {
 	usecase := &usecase{
-		database: database,
-		logger:   logger,
+		database:  database,
+		txManager: txManager,
+		logger:    logger,
 	}
 
 	return usecase
