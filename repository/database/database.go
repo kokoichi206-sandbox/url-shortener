@@ -5,8 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 
+	_ "github.com/lib/pq"
+
+	"github.com/kokoichi206-sandbox/url-shortener/domain/repository"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
-	_ "github.com/lib/pq" // postgres driver
 )
 
 type database struct {
@@ -16,7 +18,7 @@ type database struct {
 
 func New(
 	driver, host, port, user, password, dbname, sslmode string, logger logger.Logger,
-) (*database, error) {
+) (repository.Database, error) {
 	source := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode,
