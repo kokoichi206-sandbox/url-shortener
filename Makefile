@@ -26,6 +26,11 @@ psql:	## docker compose で起動した postgresql の db に接続する。
 godoc:	## godoc をローカルで表示する。http://localhost:8080/{module_name}
 	pkgsite
 
+.PHONY: mock
+mock:	## mock を生成する。
+	mockgen -source=domain/repository/repository.go -destination=usecase/mock_repository_test.go -package=usecase_test
+	mockgen -source=domain/repository/urls.go -destination=usecase/mock_rurls_test.go -package=usecase_test
+
 .PHONY: lint
 lint:	## golangci を使って lint を走らせる。
 	golangci-lint run -v
