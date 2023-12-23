@@ -2,14 +2,19 @@ package usecase
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"fmt"
+	"math/big"
 
-	"github.com/google/uuid"
 	tracer "github.com/opentracing/opentracing-go"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
+)
+
+const (
+	shortenedURLLength = 3
 )
 
 func (u *usecase) SearchOriginalURL(ctx context.Context, shortURL string) (string, error) {
@@ -41,7 +46,10 @@ func (u *usecase) GenerateURL(ctx context.Context, originalURL string) (string, 
 			return nil
 		}
 
-		shortURL = uuid.New().String()
+		shortURL, err = generateRandomString(shortenedURLLength)
+		if err != nil {
+			return fmt.Errorf("failed to generate random string: %w", err)
+		}
 
 		err = u.urlRepo.InsertURL(ctx, tx, originalURL, shortURL)
 		if err != nil {
@@ -54,4 +62,21 @@ func (u *usecase) GenerateURL(ctx context.Context, originalURL string) (string, 
 	}
 
 	return shortURL, nil
+}
+
+// [a-zA-Z0-9] からランダムに n 文字の文字列を生成する。
+func generateRandomString(n int) (string, error) {
+	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	result := make([]byte, n)
+
+	for i := range result {
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
+		if err != nil {
+			return "", fmt.Errorf("failed to rand.Int: %w", err)
+		}
+
+		result[i] = letters[num.Int64()]
+	}
+
+	return string(result), nil
 }
