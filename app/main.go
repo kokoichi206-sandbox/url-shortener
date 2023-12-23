@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// database
-	database, err := database.New(
+	db, txManager, err := database.New(
 		cfg.DBDriver, cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword,
 		cfg.DBName, cfg.DBSSLMode, logger,
 	)
@@ -43,8 +43,10 @@ func main() {
 		logger.Errorf(context.Background(), "failed to db.New: ", err)
 	}
 
+	urlRepo := database.NewURLRepo()
+
 	// usecase
-	usecase := usecase.New(database, logger)
+	usecase := usecase.New(db, txManager, urlRepo, logger)
 
 	// handler
 	h := handler.New(logger, usecase)

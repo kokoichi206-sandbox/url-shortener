@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/repository"
+	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
 )
 
@@ -18,7 +19,7 @@ type database struct {
 
 func New(
 	driver, host, port, user, password, dbname, sslmode string, logger logger.Logger,
-) (repository.Database, error) {
+) (repository.Database, transaction.TxManager, error) {
 	source := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode,
@@ -26,7 +27,7 @@ func New(
 
 	sqlDB, err := sql.Open(driver, source)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open sql: %w", err)
+		return nil, nil, fmt.Errorf("failed to open sql: %w", err)
 	}
 
 	db := &database{
@@ -34,7 +35,9 @@ func New(
 		logger: logger,
 	}
 
-	return db, nil
+	txManager := newTxManager(sqlDB)
+
+	return db, txManager, nil
 }
 
 func (d *database) Health(ctx context.Context) error {

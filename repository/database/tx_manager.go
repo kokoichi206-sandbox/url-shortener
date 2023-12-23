@@ -12,7 +12,7 @@ type txManager struct {
 	db *sql.DB
 }
 
-func NewTxManager(db *sql.DB) transaction.TxManager {
+func newTxManager(db *sql.DB) transaction.TxManager {
 	return &txManager{
 		db: db,
 	}

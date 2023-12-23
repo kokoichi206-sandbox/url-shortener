@@ -12,19 +12,22 @@ type Usecase interface {
 	Health(ctx context.Context) error
 
 	SearchOriginalURL(ctx context.Context, shortURL string) (string, error)
+	GenerateURL(ctx context.Context, originalURL string) (string, error)
 }
 
 type usecase struct {
 	database  repository.Database
 	txManager transaction.TxManager
+	urlRepo   repository.URLRepository
 
 	logger logger.Logger
 }
 
-func New(database repository.Database, txManager transaction.TxManager, logger logger.Logger) Usecase {
+func New(database repository.Database, txManager transaction.TxManager, urlRepo repository.URLRepository, logger logger.Logger) Usecase {
 	usecase := &usecase{
 		database:  database,
 		txManager: txManager,
+		urlRepo:   urlRepo,
 		logger:    logger,
 	}
 
