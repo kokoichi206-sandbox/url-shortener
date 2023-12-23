@@ -35,14 +35,22 @@ func main() {
 	}
 
 	// database
-	db, txManager, err := database.New(
+	sqlDB, err := database.Connect(
 		cfg.DBDriver, cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword,
-		cfg.DBName, cfg.DBSSLMode, logger,
+		cfg.DBName, cfg.DBSSLMode,
 	)
 	if err != nil {
-		logger.Errorf(context.Background(), "failed to db.New: ", err)
+		logger.Criticalf(context.Background(), "failed to db.Connect: ", err)
+		os.Exit(1)
 	}
 
+	if err := sqlDB.Ping(); err != nil {
+		logger.Criticalf(context.Background(), "failed to db.Ping: ", err)
+		os.Exit(1)
+	}
+
+	db := database.New(sqlDB, logger)
+	txManager := database.NewTxManager(sqlDB)
 	urlRepo := database.NewURLRepo()
 
 	// usecase
