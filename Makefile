@@ -28,8 +28,12 @@ godoc:	## godoc をローカルで表示する。http://localhost:8080/{module_n
 
 .PHONY: mock
 mock:	## mock を生成する。
+	# usecase 用。
 	mockgen -source=domain/repository/repository.go -destination=usecase/mock_repository_test.go -package=usecase_test
 	mockgen -source=domain/repository/urls.go -destination=usecase/mock_rurls_test.go -package=usecase_test
+
+	# handler 用。
+	mockgen -source=usecase/usecase.go -destination=handler/mock_usecase_test.go -package=handler_test
 
 .PHONY: lint
 lint:	## golangci を使って lint を走らせる。
