@@ -38,7 +38,7 @@ func (t *txManager) ReadWriteTransaction(ctx context.Context, f func(ctx context
 		}
 	}()
 
-	if err = f(ctx, &rwTx{tx}); err != nil {
+	if err = f(ctx, &RwTx{tx}); err != nil {
 		return fmt.Errorf("failed to execute f: %w", err)
 	}
 

@@ -37,10 +37,16 @@ func (d *database) SearchURLFromShortURL(ctx context.Context, shortURL string) (
 	return url, nil
 }
 
-type urlRepo struct{}
+type urlRepo struct {
+	extractRWTx func(transaction.RWTx) (*RwTx, error)
+}
 
-func NewURLRepo() repository.URLRepository {
-	return &urlRepo{}
+func NewURLRepo(
+	extractRWTx func(transaction.RWTx) (*RwTx, error),
+) repository.URLRepository {
+	return &urlRepo{
+		extractRWTx: extractRWTx,
+	}
 }
 
 const selectShortURLStmt = `
@@ -54,7 +60,7 @@ func (u *urlRepo) SelectShortURL(ctx context.Context, _tx transaction.RWTx, orig
 	span, ctx := tracer.StartSpanFromContext(ctx, "u.SelectShortURL")
 	defer span.Finish()
 
-	tx, err := ExtractRWTx(_tx)
+	tx, err := u.extractRWTx(_tx)
 	if err != nil {
 		return "", fmt.Errorf("failed to extract tx: %w", err)
 	}
@@ -83,11 +89,11 @@ INSERT INTO shorturl (
 );
 `
 
-func (t *urlRepo) InsertURL(ctx context.Context, _tx transaction.RWTx, originalURL string, shortURL string) error {
+func (u *urlRepo) InsertURL(ctx context.Context, _tx transaction.RWTx, originalURL string, shortURL string) error {
 	span, ctx := tracer.StartSpanFromContext(ctx, "t.InsertURL")
 	defer span.Finish()
 
-	tx, err := ExtractRWTx(_tx)
+	tx, err := u.extractRWTx(_tx)
 	if err != nil {
 		return fmt.Errorf("failed to extract tx: %w", err)
 	}

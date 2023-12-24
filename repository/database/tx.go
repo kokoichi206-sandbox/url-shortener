@@ -7,15 +7,15 @@ import (
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 )
 
-type rwTx struct {
+type RwTx struct {
 	*sql.Tx
 }
 
-func (t *rwTx) ROTxImpl() {}
-func (t *rwTx) RWTxImpl() {}
+func (t *RwTx) ROTxImpl() {}
+func (t *RwTx) RWTxImpl() {}
 
-func ExtractRWTx(_tx transaction.ROTx) (*rwTx, error) {
-	tx, ok := _tx.(*rwTx)
+func ExtractRWTx(_tx transaction.RWTx) (*RwTx, error) {
+	tx, ok := _tx.(*RwTx)
 	if !ok {
 		return nil, errors.New("failed to extract rwTx of sql")
 	}

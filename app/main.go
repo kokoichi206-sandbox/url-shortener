@@ -51,7 +51,7 @@ func main() {
 
 	db := database.New(sqlDB, logger)
 	txManager := database.NewTxManager(sqlDB)
-	urlRepo := database.NewURLRepo()
+	urlRepo := database.NewURLRepo(database.ExtractRWTx)
 
 	// usecase
 	usecase := usecase.New(db, txManager, urlRepo, logger)
