@@ -14,6 +14,8 @@ type RwTx struct {
 func (t *RwTx) ROTxImpl() {}
 func (t *RwTx) RWTxImpl() {}
 
+var _ transaction.ROTx = (*RwTx)(nil)
+
 func ExtractRWTx(_tx transaction.RWTx) (*RwTx, error) {
 	tx, ok := _tx.(*RwTx)
 	if !ok {
