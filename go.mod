@@ -3,6 +3,7 @@ module github.com/kokoichi206-sandbox/url-shortener
 go 1.20
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.5.0
