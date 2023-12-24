@@ -12,7 +12,7 @@ import (
 	tracer "github.com/opentracing/opentracing-go"
 )
 
-const searchURLFromShortURLQuery = `
+const searchURLFromShortURLStmt = `
 SELECT
 	url
 FROM shorturl
@@ -23,7 +23,7 @@ func (d *database) SearchURLFromShortURL(ctx context.Context, shortURL string) (
 	span, ctx := tracer.StartSpanFromContext(ctx, "d.SearchURLFromShortURL")
 	defer span.Finish()
 
-	row := d.db.QueryRowContext(ctx, searchURLFromShortURLQuery, shortURL)
+	row := d.db.QueryRowContext(ctx, searchURLFromShortURLStmt, shortURL)
 
 	var url string
 	if err := row.Scan(&url); err != nil {
@@ -43,7 +43,7 @@ func NewURLRepo() repository.URLRepository {
 	return &urlRepo{}
 }
 
-const selectShortURL = `
+const selectShortURLStmt = `
 SELECT
 	short
 FROM shorturl
@@ -59,7 +59,7 @@ func (u *urlRepo) SelectShortURL(ctx context.Context, _tx transaction.RWTx, orig
 		return "", fmt.Errorf("failed to extract tx: %w", err)
 	}
 
-	row := tx.QueryRowContext(ctx, selectShortURL, originalURL)
+	row := tx.QueryRowContext(ctx, selectShortURLStmt, originalURL)
 
 	var shortURL string
 	if err := row.Scan(&shortURL); err != nil {
@@ -73,7 +73,7 @@ func (u *urlRepo) SelectShortURL(ctx context.Context, _tx transaction.RWTx, orig
 	return shortURL, nil
 }
 
-const insertURL = `
+const insertURLStmt = `
 INSERT INTO shorturl (
 	url,
 	short
@@ -92,7 +92,7 @@ func (t *urlRepo) InsertURL(ctx context.Context, _tx transaction.RWTx, originalU
 		return fmt.Errorf("failed to extract tx: %w", err)
 	}
 
-	if _, err := tx.ExecContext(ctx, insertURL, originalURL, shortURL); err != nil {
+	if _, err := tx.ExecContext(ctx, insertURLStmt, originalURL, shortURL); err != nil {
 		return fmt.Errorf("failed to insert: %w", err)
 	}
 
