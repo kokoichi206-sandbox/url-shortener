@@ -27,10 +27,11 @@ func main() {
 
 	// tracer
 	tracer, traceCloser, err := util.NewJaegerTracer(cfg.AgentHost, cfg.AgentPort, service)
+	defer traceCloser.Close()
+
 	if err != nil {
 		logger.Errorf(context.Background(), "cannot initialize jaeger tracer: ", err)
 	} else {
-		defer traceCloser.Close()
 		opentracing.SetGlobalTracer(tracer)
 	}
 

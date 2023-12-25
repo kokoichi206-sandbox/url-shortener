@@ -59,7 +59,7 @@ func Test_Database_ExtractRWTx(t *testing.T) {
 			if tc.makeMock != nil {
 				tc.makeMock(mock)
 				tx, err := db.BeginTx(context.Background(), nil)
-				assert.Nil(t, err, "error of BeginTx should be nil")
+				assert.NoError(t, err, "error of BeginTx should be nil")
 				rwt = &database.RwTx{tx}
 			}
 
@@ -68,7 +68,7 @@ func Test_Database_ExtractRWTx(t *testing.T) {
 
 			// Assert
 			if tc.wantErr == "" {
-				assert.Nil(t, err, "error should be nil")
+				assert.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}

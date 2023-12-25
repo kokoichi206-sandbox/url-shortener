@@ -115,7 +115,7 @@ func Test_Database_NewTxManager(t *testing.T) {
 
 			// Assert
 			if tc.wantErr == "" {
-				assert.Nil(t, err, "error should be nil")
+				assert.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}

@@ -97,7 +97,7 @@ func Test_Database_SearchURLFromShortURL(t *testing.T) {
 			// Assert
 			assert.Equal(t, tc.want, got, "result does not match")
 			if tc.wantErr == "" {
-				assert.Nil(t, err, "error should be nil")
+				assert.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}
@@ -218,7 +218,7 @@ func Test_Database_SelectShortURL(t *testing.T) {
 			// TODO: よりうまくテストができないか考える。
 			// より外側の txManager で tx が作成される想定だが、テストではここで作成する。
 			tx, err := db.BeginTx(context.Background(), nil)
-			assert.Nil(t, err, "error of BeginTx should be nil")
+			assert.NoError(t, err, "error of BeginTx should be nil")
 			rwt := &database.RwTx{tx}
 
 			urlRepo := database.NewURLRepo(tc.makeExtractRWTx(tx))
@@ -229,7 +229,7 @@ func Test_Database_SelectShortURL(t *testing.T) {
 			// Assert
 			assert.Equal(t, tc.want, got, "result does not match")
 			if tc.wantErr == "" {
-				assert.Nil(t, err, "error should be nil")
+				assert.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}
@@ -329,7 +329,7 @@ func Test_Database_InsertURL(t *testing.T) {
 			// TODO: よりうまくテストができないか考える。
 			// より外側の txManager で tx が作成される想定だが、テストではここで作成する。
 			tx, err := db.BeginTx(context.Background(), nil)
-			assert.Nil(t, err, "error of BeginTx should be nil")
+			assert.NoError(t, err, "error of BeginTx should be nil")
 			rwt := &database.RwTx{tx}
 
 			urlRepo := database.NewURLRepo(tc.makeExtractRWTx(tx))
@@ -339,7 +339,7 @@ func Test_Database_InsertURL(t *testing.T) {
 
 			// Assert
 			if tc.wantErr == "" {
-				assert.Nil(t, err, "error should be nil")
+				assert.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}
