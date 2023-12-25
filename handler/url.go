@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	tracer "github.com/opentracing/opentracing-go"
+
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
 	"github.com/kokoichi206-sandbox/url-shortener/model/request"
-	tracer "github.com/opentracing/opentracing-go"
 )
 
 func (h *handler) GetOriginalURL(c *gin.Context) error {

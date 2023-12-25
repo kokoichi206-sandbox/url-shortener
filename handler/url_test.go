@@ -11,11 +11,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kokoichi206-sandbox/url-shortener/handler"
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
 	"github.com/kokoichi206-sandbox/url-shortener/model/request"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_Handler_GetOriginalURL(t *testing.T) {
@@ -182,7 +183,7 @@ func Test_Handler_GenerateURL(t *testing.T) {
 
 			// Assert
 			assert.Equal(t, tc.wantStatus, recorder.Code, "status code should be equal")
-			assert.Equal(t, tc.want, string(recorder.Body.Bytes()), "response body should be equal")
+			assert.Equal(t, tc.want, recorder.Body.String(), "response body should be equal")
 			assert.True(t, strings.Contains(b.String(), tc.wantLog), "log should contain expected string")
 		})
 	}

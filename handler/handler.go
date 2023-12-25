@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
 	"github.com/kokoichi206-sandbox/url-shortener/usecase"
 	"github.com/kokoichi206-sandbox/url-shortener/util"

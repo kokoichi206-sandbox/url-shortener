@@ -54,7 +54,6 @@ func Test_Database_SearchURLFromShortURL(t *testing.T) {
 					ExpectQuery(regexp.QuoteMeta(database.SearchURLFromShortURLStmt)).
 					WithArgs("R0D").
 					WillReturnError(sql.ErrNoRows)
-
 			},
 			wantErr: apperr.ErrShortURLNotFound.Error(),
 		},
@@ -67,7 +66,6 @@ func Test_Database_SearchURLFromShortURL(t *testing.T) {
 					ExpectQuery(regexp.QuoteMeta(database.SearchURLFromShortURLStmt)).
 					WithArgs("R0D").
 					WillReturnError(errors.New("scan error"))
-
 			},
 			wantErr: "failed to scan: scan error",
 		},
@@ -117,7 +115,7 @@ func Test_Database_SelectShortURL(t *testing.T) {
 	testCases := map[string]struct {
 		args            args
 		makeMock        func(m sqlmock.Sqlmock)
-		makeExtractRWTx func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error)
+		makeExtractRWTx func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error)
 		want            string
 		wantErr         string
 	}{
@@ -135,9 +133,9 @@ func Test_Database_SelectShortURL(t *testing.T) {
 							AddRow("R0D"),
 					)
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
-					return &database.RwTx{_sqlTx}, nil
+					return &database.RwTx{sqlTx}, nil
 				}
 			},
 			want: "R0D",
@@ -156,7 +154,7 @@ func Test_Database_SelectShortURL(t *testing.T) {
 							AddRow("R0D"),
 					)
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
 					return nil, errors.New("extract rwtx error")
 				}
@@ -174,9 +172,9 @@ func Test_Database_SelectShortURL(t *testing.T) {
 					WithArgs("https://wtf.example.com").
 					WillReturnError(sql.ErrNoRows)
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
-					return &database.RwTx{_sqlTx}, nil
+					return &database.RwTx{sqlTx}, nil
 				}
 			},
 			wantErr: apperr.ErrShortURLNotFound.Error(),
@@ -192,9 +190,9 @@ func Test_Database_SelectShortURL(t *testing.T) {
 					WithArgs("https://example.com").
 					WillReturnError(errors.New("scan error"))
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
-					return &database.RwTx{_sqlTx}, nil
+					return &database.RwTx{sqlTx}, nil
 				}
 			},
 			wantErr: "failed to scan: scan error",
@@ -250,7 +248,7 @@ func Test_Database_InsertURL(t *testing.T) {
 	testCases := map[string]struct {
 		args            args
 		makeMock        func(m sqlmock.Sqlmock)
-		makeExtractRWTx func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error)
+		makeExtractRWTx func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error)
 		want            string
 		wantErr         string
 	}{
@@ -266,9 +264,9 @@ func Test_Database_InsertURL(t *testing.T) {
 					WithArgs("https://example.com", "R0D").
 					WillReturnResult(driver.RowsAffected(1))
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
-					return &database.RwTx{_sqlTx}, nil
+					return &database.RwTx{sqlTx}, nil
 				}
 			},
 		},
@@ -284,7 +282,7 @@ func Test_Database_InsertURL(t *testing.T) {
 					WithArgs("https://example.com", "R0D").
 					WillReturnResult(driver.RowsAffected(1))
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
 					return nil, errors.New("extract rwtx error")
 				}
@@ -303,9 +301,9 @@ func Test_Database_InsertURL(t *testing.T) {
 					WithArgs("https://example.com", "R0D").
 					WillReturnError(errors.New("exec error"))
 			},
-			makeExtractRWTx: func(_sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
+			makeExtractRWTx: func(sqlTx *sql.Tx) func(transaction.RWTx) (*database.RwTx, error) {
 				return func(r transaction.RWTx) (*database.RwTx, error) {
-					return &database.RwTx{_sqlTx}, nil
+					return &database.RwTx{sqlTx}, nil
 				}
 			},
 			wantErr: "failed to insert: exec error",

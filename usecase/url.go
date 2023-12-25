@@ -34,6 +34,7 @@ func (u *usecase) GenerateURL(ctx context.Context, originalURL string) (string, 
 	defer span.Finish()
 
 	var shortURL string
+
 	if err := u.txManager.ReadWriteTransaction(ctx, func(ctx context.Context, tx transaction.RWTx) error {
 		var err error
 
@@ -67,6 +68,7 @@ func (u *usecase) GenerateURL(ctx context.Context, originalURL string) (string, 
 // [a-zA-Z0-9] からランダムに n 文字の文字列を生成する。
 func generateRandomString(n int) (string, error) {
 	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 	result := make([]byte, n)
 
 	for i := range result {

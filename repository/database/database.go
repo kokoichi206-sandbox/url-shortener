@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
-
 	"github.com/kokoichi206-sandbox/url-shortener/domain/repository"
 	"github.com/kokoichi206-sandbox/url-shortener/util/logger"
+	_ "github.com/lib/pq"
 )
 
 type database struct {

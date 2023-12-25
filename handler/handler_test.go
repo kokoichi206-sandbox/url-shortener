@@ -80,7 +80,7 @@ func Test_Handler_Health(t *testing.T) {
 
 			// Assert
 			assert.Equal(t, tc.wantStatus, recorder.Code, "status code should be equal")
-			assert.Equal(t, tc.want, string(recorder.Body.Bytes()), "response body should be equal")
+			assert.Equal(t, tc.want, recorder.Body.String(), "response body should be equal")
 			assert.True(t, strings.Contains(b.String(), tc.wantLog), "log should contain expected string")
 		})
 	}

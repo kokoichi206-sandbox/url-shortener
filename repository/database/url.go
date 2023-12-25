@@ -6,10 +6,11 @@ import (
 	"errors"
 	"fmt"
 
+	tracer "github.com/opentracing/opentracing-go"
+
 	"github.com/kokoichi206-sandbox/url-shortener/domain/repository"
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
-	tracer "github.com/opentracing/opentracing-go"
 )
 
 const searchURLFromShortURLStmt = `
@@ -56,11 +57,11 @@ FROM shorturl
 WHERE url = $1;
 `
 
-func (u *urlRepo) SelectShortURL(ctx context.Context, _tx transaction.RWTx, originalURL string) (string, error) {
+func (u *urlRepo) SelectShortURL(ctx context.Context, ttx transaction.RWTx, originalURL string) (string, error) {
 	span, ctx := tracer.StartSpanFromContext(ctx, "u.SelectShortURL")
 	defer span.Finish()
 
-	tx, err := u.extractRWTx(_tx)
+	tx, err := u.extractRWTx(ttx)
 	if err != nil {
 		return "", fmt.Errorf("failed to extract tx: %w", err)
 	}
@@ -89,11 +90,11 @@ INSERT INTO shorturl (
 );
 `
 
-func (u *urlRepo) InsertURL(ctx context.Context, _tx transaction.RWTx, originalURL string, shortURL string) error {
+func (u *urlRepo) InsertURL(ctx context.Context, ttx transaction.RWTx, originalURL string, shortURL string) error {
 	span, ctx := tracer.StartSpanFromContext(ctx, "t.InsertURL")
 	defer span.Finish()
 
-	tx, err := u.extractRWTx(_tx)
+	tx, err := u.extractRWTx(ttx)
 	if err != nil {
 		return fmt.Errorf("failed to extract tx: %w", err)
 	}

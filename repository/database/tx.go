@@ -16,11 +16,11 @@ func (t *RwTx) RWTxImpl() {}
 
 var _ transaction.ROTx = (*RwTx)(nil)
 
-func ExtractRWTx(_tx transaction.RWTx) (*RwTx, error) {
-	tx, ok := _tx.(*RwTx)
+func ExtractRWTx(tx transaction.RWTx) (*RwTx, error) {
+	rwTx, ok := tx.(*RwTx)
 	if !ok {
 		return nil, errors.New("failed to extract rwTx of sql")
 	}
 
-	return tx, nil
+	return rwTx, nil
 }

@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/repository/database"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_Database_ExtractRWTx(t *testing.T) {

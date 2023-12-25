@@ -23,7 +23,10 @@ type usecase struct {
 	logger logger.Logger
 }
 
-func New(database repository.Database, txManager transaction.TxManager, urlRepo repository.URLRepository, logger logger.Logger) Usecase {
+func New(
+	database repository.Database, txManager transaction.TxManager, urlRepo repository.URLRepository,
+	logger logger.Logger,
+) Usecase {
 	usecase := &usecase{
 		database:  database,
 		txManager: txManager,
