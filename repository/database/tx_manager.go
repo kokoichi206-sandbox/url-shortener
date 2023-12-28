@@ -18,7 +18,9 @@ func NewTxManager(db *sql.DB) transaction.TxManager {
 	}
 }
 
-func (t *txManager) ReadWriteTransaction(ctx context.Context, f func(ctx context.Context, tx transaction.RWTx) error) (err error) {
+func (t *txManager) ReadWriteTransaction(
+	ctx context.Context, f func(ctx context.Context, tx transaction.RWTx) error,
+) (err error) {
 	tx, err := t.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin tx: %w", err)

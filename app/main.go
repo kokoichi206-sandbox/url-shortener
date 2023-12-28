@@ -18,9 +18,7 @@ const (
 	service = "server-template"
 )
 
-var (
-	exitCode = 0
-)
+var exitCode = 0
 
 func main() {
 	defer func() {

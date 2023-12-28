@@ -8,6 +8,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
@@ -91,7 +92,7 @@ func Test_Usecase_SearchOriginalURL(t *testing.T) {
 			// Assert
 			assert.Equal(t, tc.want, got, "result does not match")
 			if tc.wantErr == "" {
-				assert.NoError(t, err, "error should be nil")
+				require.NoError(t, err, "error should be nil")
 			} else {
 				assert.Regexp(t, tc.wantErr, err.Error(), "result does not match")
 			}
@@ -218,7 +219,7 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 			// Assert
 			assert.Regexp(t, tc.want, got, "result does not match")
 			if tc.wantErr == "" {
-				assert.NoError(t, err, "error should be nil")
+				require.NoError(t, err, "error should be nil")
 			} else {
 				assert.Regexp(t, tc.wantErr, err.Error(), "result does not match")
 			}
@@ -267,7 +268,7 @@ func Test_Usecase_GetRoomUsers(t *testing.T) {
 			// Assert
 			assert.Regexp(t, tc.wantReg, got, "result does not match")
 			if tc.wantErr == "" {
-				assert.NoError(t, err, "error should be nil")
+				require.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}

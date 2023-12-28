@@ -17,6 +17,7 @@ linters:
     - depguard
     - containedctx
     - godox
+    - gci
     ## ============ deprecated ============
     - exhaustivestruct
     - exhaustruct

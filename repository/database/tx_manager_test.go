@@ -7,6 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
 	"github.com/kokoichi206-sandbox/url-shortener/repository/database"
@@ -115,7 +116,7 @@ func Test_Database_NewTxManager(t *testing.T) {
 
 			// Assert
 			if tc.wantErr == "" {
-				assert.NoError(t, err, "error should be nil")
+				require.NoError(t, err, "error should be nil")
 			} else {
 				assert.Equal(t, tc.wantErr, err.Error(), "result does not match")
 			}
