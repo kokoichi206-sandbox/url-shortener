@@ -1,8 +1,10 @@
-package usecase
+package repository
 
-import "context"
+import (
+	"context"
+)
 
-type database interface {
+type Database interface {
 	Health(ctx context.Context) error
 
 	SearchURLFromShortURL(ctx context.Context, shortURL string) (string, error)

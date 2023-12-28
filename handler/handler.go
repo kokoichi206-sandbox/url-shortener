@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/kokoichi206-sandbox/url-shortener/model/apperr"
 	"github.com/kokoichi206-sandbox/url-shortener/usecase"
 	"github.com/kokoichi206-sandbox/url-shortener/util"
@@ -41,6 +42,7 @@ func (h *handler) setupRoutes() {
 	api.Use(h.requestIDMW())
 
 	api.Handle(http.MethodGet, "/health", handlerWrapper(h.Health, h.logger))
+	api.Handle(http.MethodPost, "/urls", handlerWrapper(h.GenerateURL, h.logger))
 }
 
 func handlerWrapper(fun func(c *gin.Context) error, logger logger.Logger) gin.HandlerFunc {

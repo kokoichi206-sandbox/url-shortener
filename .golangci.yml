@@ -16,6 +16,8 @@ linters:
     - nonamedreturns
     - depguard
     - containedctx
+    - godox
+    - gci
     ## ============ deprecated ============
     - exhaustivestruct
     - exhaustruct
@@ -29,3 +31,13 @@ issues:
     - linters:
         - goerr113
       text: 'do not define dynamic errors'
+    - path: (.+)_test.go
+      linters:
+        - funlen
+        - noctx
+        - gochecknoglobals
+        - lll
+    - path: app/main.go
+      linters:
+        - funlen
+        - gochecknoglobals

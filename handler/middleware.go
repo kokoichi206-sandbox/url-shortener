@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/kokoichi206-sandbox/url-shortener/util"
 )
 
