@@ -18,7 +18,15 @@ const (
 	service = "server-template"
 )
 
+var (
+	exitCode = 0
+)
+
 func main() {
+	defer func() {
+		os.Exit(exitCode)
+	}()
+
 	// config
 	cfg := config.New()
 
@@ -42,12 +50,18 @@ func main() {
 	)
 	if err != nil {
 		logger.Criticalf(context.Background(), "failed to db.Connect: ", err)
-		os.Exit(1)
+
+		exitCode = 1
+
+		return
 	}
 
 	if err := sqlDB.Ping(); err != nil {
 		logger.Criticalf(context.Background(), "failed to db.Ping: ", err)
-		os.Exit(1)
+
+		exitCode = 1
+
+		return
 	}
 
 	db := database.New(sqlDB, logger)
