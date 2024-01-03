@@ -109,6 +109,10 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 		originalURL string
 	}
 
+	// FIXME: 1 つのテストケースでのみ使う変数をここで定義するのは微妙。
+	// 呼び出しタイミングなどによって結果を変える方法があればそれを使うべき。
+	hasConflicted := false
+
 	testCases := map[string]struct {
 		args             args
 		makeMockDatabase func(m *MockDatabase)
@@ -161,6 +165,44 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 			},
 			want: "R0D",
 		},
+		"success: conflict shorten url (success on the 2nd try)": {
+			args: args{
+				originalURL: "https://example.com",
+			},
+			makeURLsRepo: func(m *MockURLRepository) {
+				m.
+					EXPECT().
+					SelectShortURL(gomock.Any(), gomock.Any(), "https://example.com").
+					Times(2).
+					Return("", apperr.ErrShortURLNotFound)
+				m.
+					EXPECT().
+					// 1 回目は失敗させる。
+					InsertURL(gomock.Any(), gomock.Any(), "https://example.com", "R0D").
+					Times(1).
+					Return(fmt.Errorf("test error: %w", &pq.Error{Code: "23505"}))
+				m.
+					EXPECT().
+					// 2 回目は成功させる。
+					InsertURL(gomock.Any(), gomock.Any(), "https://example.com", "XYZ").
+					Times(1).
+					Return(nil)
+			},
+			myMockTxManager: &myMockTxManager{
+				ReadWriteTransactionFunc: func(ctx context.Context, f func(ctx context.Context, tx transaction.RWTx) error) error {
+					return f(ctx, nil)
+				},
+			},
+			genShortURL: func(n int) (string, error) {
+				if !hasConflicted {
+					hasConflicted = true
+					return "R0D", nil
+				}
+				return "XYZ", nil
+			},
+			// 2 回目のリトライで成功したことを確認する。
+			want: "XYZ",
+		},
 		"failure: select url": {
 			args: args{
 				originalURL: "https://example.com",
@@ -177,6 +219,27 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 				},
 			},
 			wantErr: "failed to exec txManager.ReadWriteTransaction: failed to select short url from database: db error",
+		},
+		"failure: generate short url": {
+			args: args{
+				originalURL: "https://example.com",
+			},
+			makeURLsRepo: func(m *MockURLRepository) {
+				m.
+					EXPECT().
+					SelectShortURL(gomock.Any(), gomock.Any(), "https://example.com").
+					Return("", apperr.ErrShortURLNotFound)
+			},
+			myMockTxManager: &myMockTxManager{
+				// ReadWriteTransaction の中を実行させるために、ここで実行する関数を定義する。
+				ReadWriteTransactionFunc: func(ctx context.Context, f func(ctx context.Context, tx transaction.RWTx) error) error {
+					return f(ctx, nil)
+				},
+			},
+			genShortURL: func(n int) (string, error) {
+				return "", errors.New("test error")
+			},
+			wantErr: "failed to exec txManager.ReadWriteTransaction: failed to generate random string: test error",
 		},
 		"failure: insert url": {
 			args: args{
@@ -199,7 +262,7 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 			},
 			wantErr: "failed to exec txManager.ReadWriteTransaction: failed to insert short url to database: db error",
 		},
-		"failure: duplicate key": {
+		"failure: duplicate key (many times)": {
 			args: args{
 				originalURL: "https://example.com",
 			},
@@ -207,7 +270,7 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 				m.
 					EXPECT().
 					SelectShortURL(gomock.Any(), gomock.Any(), "https://example.com").
-					Times(3). // 3 回までリトライされること。
+					Times(3). // max で 3 回までリトライされること。
 					Return("", apperr.ErrShortURLNotFound)
 				m.
 					EXPECT().

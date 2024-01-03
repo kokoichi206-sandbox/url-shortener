@@ -37,6 +37,7 @@ issues:
         - noctx
         - gochecknoglobals
         - lll
+        - nlreturn
     - path: app/main.go
       linters:
         - funlen
