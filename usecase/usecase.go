@@ -16,9 +16,10 @@ type Usecase interface {
 }
 
 type usecase struct {
-	database  repository.Database
-	txManager transaction.TxManager
-	urlRepo   repository.URLRepository
+	database         repository.Database
+	txManager        transaction.TxManager
+	urlRepo          repository.URLRepository
+	generateShortURL func(n int) (string, error)
 
 	logger logger.Logger
 }
@@ -28,10 +29,11 @@ func New(
 	logger logger.Logger,
 ) *usecase {
 	usecase := &usecase{
-		database:  database,
-		txManager: txManager,
-		urlRepo:   urlRepo,
-		logger:    logger,
+		database:         database,
+		txManager:        txManager,
+		urlRepo:          urlRepo,
+		generateShortURL: generateRandomString,
+		logger:           logger,
 	}
 
 	return usecase

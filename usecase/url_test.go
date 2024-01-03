@@ -114,6 +114,7 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 		makeMockDatabase func(m *MockDatabase)
 		makeURLsRepo     func(m *MockURLRepository)
 		myMockTxManager  *myMockTxManager // FIXME: gomock で引数のメソッドを実行する方法がわからないため自作。
+		genShortURL      func(n int) (string, error)
 		want             string
 		wantErr          string
 	}{
@@ -128,7 +129,7 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 					Return("", apperr.ErrShortURLNotFound)
 				m.
 					EXPECT().
-					InsertURL(gomock.Any(), gomock.Any(), "https://example.com", gomock.Any()).
+					InsertURL(gomock.Any(), gomock.Any(), "https://example.com", "R0D").
 					Return(nil)
 			},
 			myMockTxManager: &myMockTxManager{
@@ -137,7 +138,11 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 					return f(ctx, nil)
 				},
 			},
-			want: "[a-zA-Z0-9]{3}",
+			// テストの結果を固定する。
+			genShortURL: func(n int) (string, error) {
+				return "R0D", nil
+			},
+			want: "R0D",
 		},
 		"success: existing url": {
 			args: args{
@@ -237,6 +242,9 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 			logger.NewBasicLogger(b, "test", "generateURL")
 
 			u := usecase.New(nil, tc.myMockTxManager, ur, nil)
+			if tc.genShortURL != nil {
+				u.SetGenerateShortURL(tc.genShortURL)
+			}
 
 			// Act
 			got, err := u.GenerateURL(context.Background(), tc.args.originalURL)

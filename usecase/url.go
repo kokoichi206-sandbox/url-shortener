@@ -77,7 +77,7 @@ func (u *usecase) fetchOrGenerateShortURL(ctx context.Context, originalURL strin
 			return nil
 		}
 
-		shortURL, err = generateRandomString(shortenedURLLength)
+		shortURL, err = u.generateShortURL(shortenedURLLength)
 		if err != nil {
 			return fmt.Errorf("failed to generate random string: %w", err)
 		}
