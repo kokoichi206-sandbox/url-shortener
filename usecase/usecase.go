@@ -26,7 +26,7 @@ type usecase struct {
 func New(
 	database repository.Database, txManager transaction.TxManager, urlRepo repository.URLRepository,
 	logger logger.Logger,
-) Usecase {
+) *usecase {
 	usecase := &usecase{
 		database:  database,
 		txManager: txManager,
