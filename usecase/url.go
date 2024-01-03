@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/lib/pq"
 	tracer "github.com/opentracing/opentracing-go"
 
 	"github.com/kokoichi206-sandbox/url-shortener/domain/transaction"
@@ -33,6 +34,35 @@ func (u *usecase) GenerateURL(ctx context.Context, originalURL string) (string, 
 	span, ctx := tracer.StartSpanFromContext(ctx, "d.GenerateURL")
 	defer span.Finish()
 
+	maxRetries := 3
+	retries := 0
+
+	for {
+		if retries >= maxRetries {
+			return "", fmt.Errorf("failed to insert short url due to duplicate key error: (retry count: %v)", retries)
+		}
+
+		shortURL, err := u.fetchOrGenerateShortURL(ctx, originalURL)
+		if err != nil {
+			var pqErr *pq.Error
+
+			// Error code 23505 means 'unique_violation' error in PostgreSQL.
+			// This error occurs when attempting to insert a short URL that already exists in the database.
+			// In this case, regenerate a new short URL and retry the insertion process.
+			if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+				retries++
+
+				continue
+			}
+
+			return "", fmt.Errorf("failed to insert short url to database: %w", err)
+		}
+
+		return shortURL, nil
+	}
+}
+
+func (u *usecase) fetchOrGenerateShortURL(ctx context.Context, originalURL string) (string, error) {
 	var shortURL string
 
 	if err := u.txManager.ReadWriteTransaction(ctx, func(ctx context.Context, tx transaction.RWTx) error {

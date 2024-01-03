@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -191,6 +193,29 @@ func Test_Usecase_GenerateURL(t *testing.T) {
 				},
 			},
 			wantErr: "failed to exec txManager.ReadWriteTransaction: failed to insert short url to database: db error",
+		},
+		"failure: duplicate key": {
+			args: args{
+				originalURL: "https://example.com",
+			},
+			makeURLsRepo: func(m *MockURLRepository) {
+				m.
+					EXPECT().
+					SelectShortURL(gomock.Any(), gomock.Any(), "https://example.com").
+					Times(3). // 3 回までリトライされること。
+					Return("", apperr.ErrShortURLNotFound)
+				m.
+					EXPECT().
+					InsertURL(gomock.Any(), gomock.Any(), "https://example.com", gomock.Any()).
+					Times(3).
+					Return(fmt.Errorf("test error: %w", &pq.Error{Code: "23505"}))
+			},
+			myMockTxManager: &myMockTxManager{
+				ReadWriteTransactionFunc: func(ctx context.Context, f func(ctx context.Context, tx transaction.RWTx) error) error {
+					return f(ctx, nil)
+				},
+			},
+			wantErr: `failed to insert short url due to duplicate key error: \(retry count: \d\)`,
 		},
 	}
 
