@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -22,24 +21,4 @@ func GetRequestID(ctx context.Context) string {
 	}
 
 	return reqID
-}
-
-type DetachedCtx struct {
-	Parent context.Context
-}
-
-func (d DetachedCtx) Deadline() (deadline time.Time, ok bool) {
-	return time.Time{}, false
-}
-
-func (d DetachedCtx) Done() <-chan struct{} {
-	return nil
-}
-
-func (d DetachedCtx) Err() error {
-	return nil
-}
-
-func (d DetachedCtx) Value(key any) any {
-	return d.Parent.Value(key)
 }

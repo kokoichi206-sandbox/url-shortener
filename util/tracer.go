@@ -13,7 +13,7 @@ import (
 // By default, jaeger is listening at "127.0.0.1:5775".
 func NewJaegerTracer(host, port, service string) (opentracing.Tracer, io.Closer, error) {
 	if host == "" || port == "" {
-		return nil, nil, fmt.Errorf("host or port is empty")
+		return nil, io.NopCloser(nil), fmt.Errorf("host or port is empty")
 	}
 
 	addr := net.JoinHostPort(host, port)
