@@ -6,7 +6,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/stretchr/testify v1.8.4
